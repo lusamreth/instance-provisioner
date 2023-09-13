@@ -1,5 +1,6 @@
 ---
-- hosts: all
+# - hosts: all
+- hosts: "{{ target_server }}"
   tasks:
     - debug:
         msg: "I'm in group 'onlybar'"
