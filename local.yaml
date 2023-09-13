@@ -1,6 +1,5 @@
 ---
 - hosts: all
-  connection: local
   tasks:
     - debug:
       msg: "Running debug"
