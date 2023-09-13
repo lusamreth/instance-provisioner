@@ -4,3 +4,6 @@
   tasks:
     - debug:
       msg: "Running debug"
+
+    - name: Simple echooooo
+      shell: echo "Hello World"
