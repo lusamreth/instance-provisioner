@@ -1,0 +1,45 @@
+---
+- name: Check If Docker Is Installed
+  command: docker --version
+  register: docker_valid
+  ignore_errors: true
+
+- name: pre-config repo
+  command: echo "configuring docker repo"
+  notify:
+    - docker gpg
+    - docker repo
+
+- name: ensure Docker is Installed
+  apt:
+    name: docker.io
+    state: present
+    update_cache: true
+  when: docker_valid.rc != 0
+  notify: restart docker
+
+- name: ensure docker-compose is installed
+  apt:
+    pkg:
+      - docker-compose-plugin
+      - docker-compose
+    state: present
+
+- name: Ensure group "docker" exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+
+- name: Add user jenkins to Docker group
+  user:
+    name: "{{ primary_user }}"
+    groups: docker
+    append: yes
+  register: add_to_docker_group_result
+
+- name: Include reset connection tasks
+  ansible.builtin.include_tasks: reset_connection.yaml
+  when: add_to_docker_group_result.changed == true
+
+- name: Setting up lazydocker
+  ansible.builtin.include_tasks: lazydocker.yaml

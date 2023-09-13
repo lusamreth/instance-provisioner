@@ -1,0 +1,4 @@
+- hosts: "{{ target_server }}"
+  become: true
+  roles:
+    - nginx

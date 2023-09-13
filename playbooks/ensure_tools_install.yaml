@@ -1,0 +1,81 @@
+- hosts: "{{ target_server }}"
+  become: true
+  remote_user: "{{ ansible_user }}"
+  vars:
+    ENABLE_NPM_VALUE: "{{ ENABLE_NPM | default(0) }}"
+  tasks:
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - gnupg-agent
+          - virtualenv
+          - python3-setuptools
+          - gnupg
+        state: latest
+        update_cache: true
+
+    - name: install python3
+      ansible.builtin.apt:
+        name: python3
+        state: present
+
+    - name: install pip3 package manager
+      ansible.builtin.apt:
+        name: python3-pip
+        state: present
+        allow_downgrade: yes
+
+    - name: install fish shell
+      ansible.builtin.apt:
+        name: fish
+        state: present
+
+    - name: change and config fish shell
+      become: true
+      user:
+        name: "{{ ansible_user }}"
+        shell: /bin/fish
+
+    - name: install fisher
+      get_url:
+        url: https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish
+        dest: /tmp/install-fisher.fish
+        mode: 0755
+      # shell: curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
+
+    - name: sourcing fisher script
+      shell: |
+        source /tmp/install-fisher.fish
+        fisher install jorgebucaran/fisher
+      args:
+        executable: /usr/bin/fish
+        creates: "{{ ansible_env.HOME }}/.config/fish/functions/fisher.fish"
+
+    - name: install nginx
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        allow_downgrade: yes
+        clean: true
+
+    - name: Install LetEncrypts and certbots utils
+      ansible.builtin.apt:
+        pkg:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+
+    - name: Remove useless packages from the cache
+      ansible.builtin.apt:
+        autoclean: yes
+
+    - name: Include rule only if need npm
+      include_role:
+        name: npm
+      when: ENABLE_NPM_VALUE == 1
+  roles:
+    - docker
