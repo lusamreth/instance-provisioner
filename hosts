@@ -7,8 +7,8 @@ ansible_ssh_extra_args="-o IdentitiesOnly=yes"
 [staging_server]
 13.229.110.30
 
-#[local]
-#127.0.0.1
+[local]
+13.229.110.30
 
 # 13.250.118.240
 # 52.195.1.227
