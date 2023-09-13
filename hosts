@@ -1,3 +1,5 @@
+localhost ansible_connection=local
+
 [staging_server:vars]
 ansible_ssh_private_key_file=~/developments/jenkin-build-key.pem
 ansible_ssh_extra_args="-o IdentitiesOnly=yes"
@@ -5,8 +7,8 @@ ansible_ssh_extra_args="-o IdentitiesOnly=yes"
 [staging_server]
 13.229.110.30
 
-[local]
-127.0.0.1
+#[local]
+#127.0.0.1
 
 # 13.250.118.240
 # 52.195.1.227
