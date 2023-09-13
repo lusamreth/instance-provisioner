@@ -4,5 +4,10 @@
   tasks:
     - debug:
         msg: "I'm in group 'onlybar'"
+
     - name: echo host name
       shell: hostname
+      register: hostname_output
+
+    - debug:
+        var: hostname_output
