@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - debug:
+        msg: "I'm in group 'onlybar'"
