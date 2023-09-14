@@ -1,2 +1,2 @@
-staging_server:
-  hosts: 13.229.110.30
+locahost:
+  hosts: 127.0.0.1
