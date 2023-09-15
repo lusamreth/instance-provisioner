@@ -18,21 +18,6 @@
     state: link
   listen: link global-lazydocker
 
-- name: Add docker gpg
-  apt_key:
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
-  listen: docker gpg
-
-- name: Add Docker Repository
-  apt_repository:
-    repo: deb https://download.docker.com/linux/ubuntu jammy stable
-    state: present
-    update_cache: true
-  tags:
-    - docker
-  listen: docker repo
-
 - name: Enable and start Docker service
   ansible.builtin.service:
     name: docker
