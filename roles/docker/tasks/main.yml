@@ -4,11 +4,20 @@
   register: docker_valid
   ignore_errors: true
 
-- name: pre-config repo
-  command: echo "configuring docker repo"
-  notify:
-    - docker gpg
-    - docker repo
+- name: Add docker gpg
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+  tags:
+    - docker
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu jammy stable
+    state: present
+    update_cache: true
+  tags:
+    - docker
 
 - name: ensure Docker is Installed
   apt:
@@ -18,13 +27,13 @@
   when: docker_valid.rc != 0
   notify: restart docker
 
-- name: Verify gpg key with the fingerprint
-  remote_user: "${{ansible_user}}"
-  apt_key:
-    id: 0EBFCD88
-    state: present
-  tags:
-    - docker
+# - name: Verify gpg key with the fingerprint
+#   remote_user: "${{ansible_user}}"
+#   apt_key:
+#     id: 0EBFCD88
+#     state: present
+#   tags:
+#     - docker
 
 - name: ensure docker-compose is installed
   apt:
