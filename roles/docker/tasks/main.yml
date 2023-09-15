@@ -18,11 +18,20 @@
   when: docker_valid.rc != 0
   notify: restart docker
 
+- name: Verify gpg key with the fingerprint
+  remote_user: "${{ansible_user}}"
+  apt_key:
+    id: 0EBFCD88
+    state: present
+  tags:
+    - docker
+
 - name: ensure docker-compose is installed
   apt:
     pkg:
       - docker-compose-plugin
       - docker-compose
+    update_cache: yes
     state: present
 
 - name: Ensure group "docker" exists
