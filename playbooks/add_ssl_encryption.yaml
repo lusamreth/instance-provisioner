@@ -39,6 +39,7 @@
 
     - name: running certbot registration
       command: certbot --nginx -d "{{ https_domain_url }}"
+      command: certbot -n --nginx -d "{{ https_domain_url }}"
       args:
         creates: "/etc/letsencrypt/live/{{ https_domain_url }}"
       register: certbot_register
