@@ -38,13 +38,13 @@
       when: FORCE_RENEWAL_VAL == "1" and certificate.stat.exists
 
     - name: running certbot registration
-      command: certbot --nginx -d "{{ https_domain_url }}"
       command: certbot -n --nginx -d "{{ https_domain_url }}"
       args:
         creates: "/etc/letsencrypt/live/{{ https_domain_url }}"
       register: certbot_register
     - debug:
         var: certbot_register
+
     - name: Setup cronjob for renewal
       cron:
         name: certbot-renewal
