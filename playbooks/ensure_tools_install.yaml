@@ -60,7 +60,6 @@
         name: nginx
         state: present
         allow_downgrade: yes
-        clean: true
 
     - name: Install LetEncrypts and certbots utils
       ansible.builtin.apt:
