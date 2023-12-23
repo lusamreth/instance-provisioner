@@ -29,5 +29,6 @@
           docker-compose --env-file=.env -f jenkins-compose.yaml up -d
         chdir: "{{ JENKINS_HOME_PATH }}"
       register: output
-    - debug: var=output.stdout_lines
+
     - debug: var=output.stderr
+    - debug: var=output.stdout_lines
