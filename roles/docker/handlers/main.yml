@@ -12,10 +12,11 @@
 
 - name: symlink default lazydocker binary location to global /bin
   become: true
-  file:
+  copy:
     src: "/home/{{ primary_user }}/.local/bin/lazydocker"
     dest: /usr/bin/lazydocker
-    state: link
+    remote_src: no
+    backup: yes
   listen: link global-lazydocker
 
 - name: Enable and start Docker service
