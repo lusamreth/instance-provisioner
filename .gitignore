@@ -1,2 +1,2 @@
-hosts
-inventory.yaml
+./inventory.yaml
+./hosts
