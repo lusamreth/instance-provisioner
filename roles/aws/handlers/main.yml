@@ -1,0 +1,5 @@
+---
+- name: generate ecr keypass and login into docker 
+  become_user: "{{ primary_user }}"
+
+# handlers file for aws
