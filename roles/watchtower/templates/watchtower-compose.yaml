@@ -1,0 +1,22 @@
+version: "3"
+services : 
+  netlink-web:
+    container_name : netlink-website
+    image : 607603060687.dkr.ecr.us-east-1.amazonaws.com/reth-beanie:netlink-vite
+    restart : unless-stopped
+    environment : 
+      VITE_API_BASE_URL : ${VITE_API_BASE_URL}
+      VITE_API_KEY: ${VITE_API_KEY}
+    ports:
+      - "3080:80"
+
+  watchtower : 
+    container_name : watchtower
+    image: containrrr/watchtower
+    networks: 
+      - watchtower-network
+    
+networks : 
+  watchtower-network:
+    - name : watchtower-network
+      driver : bridge

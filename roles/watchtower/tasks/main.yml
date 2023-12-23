@@ -1,0 +1,41 @@
+---
+- name : pulling ansible tower image 
+  docker_image: 
+    name: containrrr/watchtower
+    # pull: yes
+    source: pull
+    tag: latest
+    state: present
+  register: watchtower_info
+
+- name: probing the watchtower deployment
+  stat:
+    path: "{{ ansible_env.HOME }}/watchtower-runtime"
+  register: DeploymentProject
+
+- name: create a deploy runtime dir 
+  file:
+    path : "{{ ansible_env.HOME }}/watchtower-runtime"
+    state: directory
+
+- name : copy docker compose to server 
+  template: 
+    src: watchtower-compose.yaml
+    dest: "{{ ansible_env.HOME }}/watchtower-runtime"
+
+- debug : 
+    var:
+      - watchtower_info
+ 
+- name : running ansible tower
+  shell : 
+    cmd: |
+      docker-compose -f watchtower-runtime up -d
+    chdir: "watchtower-runtime"
+  register: output
+
+- debug: var=output.stderr
+- debug: var=output.stdout_lines
+
+
+# tasks file for watchtower
