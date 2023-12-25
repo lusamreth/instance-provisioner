@@ -1,0 +1,33 @@
+---
+- hosts: staging_server
+  become_user: "{{ ansible_user }}"
+  gather_facts: true
+  vars:
+    PORTAINER_HOME_PATH: "{{ ansible_env.HOME }}/portainer"
+  tasks : 
+    - name: "create portainer home dir"
+      file:
+        dest: "{{ ansible_env.HOME }}/portainer"
+        state: directory
+    
+    - name: "copy portainer compose"
+      copy: 
+        src: portainer-compose.yaml
+        dest: "{{ ansible_env.HOME }}/portainer"    
+
+    - name: create portainer compose env file
+      copy:
+        content: |
+          PORTAINER_DATA_VOL=portainer_data
+        dest: "{{ PORTAINER_HOME_PATH }}/.env"
+
+
+    - name: running portainer container
+      shell:
+        cmd: |
+          docker compose --env-file=.env -f portainer-compose.yaml up -d
+        chdir: "{{ PORTAINER_HOME_PATH }}"
+      register: output
+
+    - debug: var=output.stderr
+    - debug: var=output.stdout_lines
