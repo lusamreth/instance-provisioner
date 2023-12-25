@@ -1,0 +1,19 @@
+version: "3"
+services :
+  netlink-web:
+    container_name : netlink-website
+    image : {{ VITE_IMAGE }}
+    restart : unless-stopped
+    networks:
+      - netlink-network
+    environment :
+      VITE_API_BASE_URL : ${VITE_API_BASE_URL}
+      VITE_API_KEY: ${VITE_API_KEY}
+    ports:
+      - "3080:80"
+
+networks:
+  netlink-network:
+    name: netlink-network
+    driver: bridge
+
