@@ -1,0 +1,30 @@
+---
+- hosts: staging_server
+  become_user: "{{ ansible_user }}"
+  vars:
+    POCKETBASE_HOME_PATH: "{{ POCKETBASE_PATH | default('{{ ansible_env.HOME }}/pocketbase') }}"
+  tasks: 
+    - name: Make pocketbase home dir
+      file:
+        dest: "{{ POCKETBASE_HOME_PATH }}"
+        state: directory
+
+    - name: Inject pocketbase dockerfile
+      copy:
+        src: pocketbase-dockerfile
+        dest: "{{ POCKETBASE_HOME_PATH }}/Dockerfile"
+        owner: "{{ ansible_user }}"
+
+    - name: build pocketbase image
+      become_user: "{{ ansible_user }}"
+      docker_image:
+        build:
+          path: "{{ POCKETBASE_HOME_PATH}}"
+        source: build
+        name: "pocketbase-server"
+        tag: latest
+    
+    - name: clean up
+      docker_prune:
+        builder_cache: true
+        images: true

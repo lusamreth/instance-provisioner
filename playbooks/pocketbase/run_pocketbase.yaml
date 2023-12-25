@@ -1,0 +1,43 @@
+---
+- hosts: staging_server
+  become_user: "{{ ansible_user }}"
+  gather_facts: true
+  # become: true
+  vars:
+    POCKETBASE_HOME_PATH: "{{ ansible_env.HOME }}/{{ POCKETBASE_HOME | default('pocketbase') }}"
+    DEFAULT_PB_DATA: "{{ POCKETBASE_HOME_PATH }}/pocketbase/pb_data" 
+    DEFAULT_PB_PUBLIC: "{{ POCKETBASE_HOME_PATH }}/public"
+
+  tasks:
+    - name: copy pocketbase compose file
+      copy:
+        src: "pocketbase-compose.yaml"
+        dest: "{{ POCKETBASE_HOME_PATH }}"
+        mode: "0644"
+    
+    - name : create pb data path 
+      file: 
+        dest: "{{ POCKETBASE_HOME_PATH }}/pb_data"
+        state: directory
+
+    - name : create pb public path 
+      file: 
+        dest: "{{ POCKETBASE_HOME_PATH }}/pb_public"
+        state: directory
+
+    - name: create docker compose env file
+      copy:
+        content: |
+          PB_DATA_PATH={{ PB_DATA_PATH }}
+          PB_PUBLIC_PATH={{ PB_PUBLIC_PATH }}
+        dest: "{{ POCKETBASE_HOME_PATH }}/.env"
+
+    - name: running pocketbase-server
+      shell:
+        cmd: |
+          docker compose -f pocketbase-compose.yaml up -d
+        chdir: "{{ POCKETBASE_HOME_PATH }}"
+      register: output
+
+    - debug: var=output.stderr
+    - debug: var=output.stdout_lines
